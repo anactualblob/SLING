@@ -5,10 +5,6 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class Ball : MonoBehaviour
 {
-
-    Vector2 velocity;
-    Vector3 previousPos;
-
     Rigidbody2D rb;
 
     [SerializeField]
@@ -21,8 +17,6 @@ public class Ball : MonoBehaviour
 
     [SerializeField]
     int positionHistoryLimit = 5;
-
-    //float angularVelocity = 0.0f;
 
 
 
@@ -39,8 +33,6 @@ public class Ball : MonoBehaviour
         if (attached)
         {
             rb.MovePosition(rope.attachPoint);
-            //velocity = transform.position - previousPos;
-            //angularVelocity = FindAngularVelocity();
         }
 
 
@@ -50,7 +42,6 @@ public class Ball : MonoBehaviour
 
     private void LateUpdate()
     {
-        //previousPos = transform.position;
         positionHistory.Enqueue(transform.position);
         while (positionHistory.Count > positionHistoryLimit)
         {
@@ -70,12 +61,6 @@ public class Ball : MonoBehaviour
     {
         rb.bodyType = RigidbodyType2D.Dynamic;
 
-        // velocity = angular velocity * radius * unit vector orthogonal to radius
-        //Vector2 posToCenter = (Vector2)transform.position - GameManager.touchPosition;
-        //float radius = posToCenter.magnitude;
-        //Vector2 velocityDirection = Vector3.Cross(posToCenter, Vector3.back).normalized;
-        //rb.velocity = (angularVelocity * radius * velocityDirection);
-
         rb.velocity = (transform.position - positionHistory.Peek()) / (Time.deltaTime*positionHistoryLimit);
         
 
@@ -83,25 +68,5 @@ public class Ball : MonoBehaviour
 
         attached = false;
     }
-
-
-
-    //public float FindAngularVelocity()
-    //{
-    //    
-    //    Vector2 prev = (Vector2)positionHistory.Peek() - GameManager.touchPosition;
-    //    Vector2 curr = (Vector2)transform.position - GameManager.touchPosition;
-    //
-    //
-    //    return Vector2.SignedAngle(prev, curr);
-    //
-    //}
-
-
-    //private void OnGUI()
-    //{
-    //    GUILayout.Label("current angular velocity: " + angularVelocity);
-    //    GUILayout.Label("position difference: " + (transform.position - positionHistory.Peek()) );
-    //}
 
 }
