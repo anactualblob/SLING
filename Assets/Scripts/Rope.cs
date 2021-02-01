@@ -12,7 +12,7 @@ public class Rope : MonoBehaviour
 
     [Header("Physics")]
     [SerializeField] float gravityForce = 1;
-    Vector2 gravity
+    Vector2 gravityVector
     {
         get { return Vector2.down * gravityForce; }
     }
@@ -29,24 +29,12 @@ public class Rope : MonoBehaviour
         get { return ropeLength / numberOfSegments; }
     }
 
-    [Space]
 
-    [SerializeField] float lineWidth = 0.1f;
-
-
-
-    [Header("Debug")]
-    //[SerializeField] Transform ropeStartTransform;
-    //[SerializeField] Transform ropeEndTransform;
-    //[Space]
-    //[SerializeField] bool connected = false;
 
     [HideInInspector]
     public Vector3 ropeStart = Vector3.zero;
     [HideInInspector]
     public Vector3 ropeEnd = Vector3.zero;
-
-
     
     public Vector2 attachPoint
     {
@@ -55,16 +43,11 @@ public class Rope : MonoBehaviour
 
 
 
-    // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         lineRenderer = GetComponent<LineRenderer>();
 
-        //ropeStart = ropeStartTransform.position;
-        //ropeEnd = ropeEndTransform.position;
-
-        
-
+        // create the rope
         for (int i = 0; i < numberOfSegments; ++i)
         {
             ropeSegments.Add(new RopeSegment(ropeStart + Vector3.down * i * ropeSegmentLength)); ;
@@ -78,11 +61,6 @@ public class Rope : MonoBehaviour
 
     void FixedUpdate()
     {
-
-        //ropeStart = ropeStartTransform.position;
-        //ropeEnd = ropeEndTransform.position;
-
-
         SimulateRope();
         ConstrainSegments(false);
         DrawRope();
@@ -99,14 +77,14 @@ public class Rope : MonoBehaviour
 
             velocity = seg.posNow - seg.posOld;
             seg.posOld = seg.posNow;
-            velocity += gravity * Time.deltaTime;
+            velocity += gravityVector * Time.deltaTime;
             seg.posNow += velocity;
 
             ropeSegments[i] = seg;
         }
     }
 
-    void ConstrainSegments(bool connected)
+    void ConstrainSegments(bool endConnected)
     {
         // first point always follows ropeStart
         RopeSegment first = ropeSegments[0];
@@ -156,7 +134,7 @@ public class Rope : MonoBehaviour
                 ropeSegments[i + 1] = nextSeg;
             }
 
-            if (connected)
+            if (endConnected)
             {
                 // last point always follows ropeEnd
                 RopeSegment last = ropeSegments[numberOfSegments - 1];
@@ -173,8 +151,6 @@ public class Rope : MonoBehaviour
 
     void DrawRope()
     {
-        lineRenderer.startWidth = lineRenderer.endWidth = lineWidth;
-
         Vector3[] ropePositions = new Vector3[numberOfSegments];
 
         for (int i = 0; i < numberOfSegments; ++i)
@@ -196,7 +172,7 @@ public class Rope : MonoBehaviour
         ropeStart = ropeStartPos;
         ropeEnd = ropeEndPos;
 
-
+        // set positions of the rope so that it's vertical
         for (int i = 0; i < ropeSegments.Count; i++)
         {
             RopeSegment seg = ropeSegments[i];
@@ -207,6 +183,7 @@ public class Rope : MonoBehaviour
             ropeSegments[i] = seg;
         }
 
+        // apply constraints with and make sure the end of the rope is pinned to ropeEnd
         ConstrainSegments(true);
     }
 

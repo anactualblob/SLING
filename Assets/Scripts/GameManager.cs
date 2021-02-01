@@ -27,7 +27,8 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] Ball ball = null;
     [SerializeField] Rope rope = null;
-    [SerializeField] Camera mainCamera = null;
+    [SerializeField] UnityEngine.Camera mainCamera = null;
+
 
 
     bool touching = false;
@@ -72,10 +73,7 @@ public class GameManager : MonoBehaviour
 
 
     void OnTouch(InputAction.CallbackContext ctx)
-    {
-
-        //Debug.Log("touch");
-        
+    {        
         rope.gameObject.SetActive(true);
         rope.InitializeRope(Vector3.zero, ball.transform.position);
         ball.AttachToRope(rope);
@@ -90,7 +88,6 @@ public class GameManager : MonoBehaviour
 
     void OnTouchRelease(InputAction.CallbackContext ctx)
     {
-        //Debug.Log("touch release");
         rope.gameObject.SetActive(false);
         ball.DetachFromRope();
 

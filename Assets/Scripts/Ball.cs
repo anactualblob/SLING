@@ -7,16 +7,15 @@ public class Ball : MonoBehaviour
 {
     Rigidbody2D rb;
 
-    [SerializeField]
     bool attached = false;
-
-    [SerializeField]
-    public Rope rope;
+    Rope rope;
 
     Queue<Vector3> positionHistory = new Queue<Vector3>();
 
-    [SerializeField]
-    int positionHistoryLimit = 5;
+    [Tooltip("Determines how many frames the position history contains. \n" +
+        "This is used when the ball detaches from the rope, because its velocity will be " +
+        "the difference between its position then and the oldest position in the history.")]
+    [SerializeField] int positionHistoryLimit = 5;
 
 
 
@@ -42,6 +41,7 @@ public class Ball : MonoBehaviour
 
     private void LateUpdate()
     {
+        // keep a history of positions from previous frames
         positionHistory.Enqueue(transform.position);
         while (positionHistory.Count > positionHistoryLimit)
         {
@@ -53,6 +53,9 @@ public class Ball : MonoBehaviour
     public void AttachToRope(Rope rope)
     {
         rb.bodyType = RigidbodyType2D.Kinematic;
+        rb.gravityScale = 0;
+        rb.velocity = Vector2.zero;
+        rb.Sleep();
         this.rope = rope;
         attached = true;
     }
@@ -60,6 +63,8 @@ public class Ball : MonoBehaviour
     public void DetachFromRope()
     {
         rb.bodyType = RigidbodyType2D.Dynamic;
+        rb.WakeUp();
+        rb.gravityScale = 1;
 
         rb.velocity = (transform.position - positionHistory.Peek()) / (Time.deltaTime*positionHistoryLimit);
         
