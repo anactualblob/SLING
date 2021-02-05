@@ -8,7 +8,7 @@ public class BackgroundManager : MonoBehaviour
     [SerializeField]
     Transform[] bg = { };
 
-    // which bg is lower
+    // index of the lower BG
     int _lowerIndex = 0;
 
     int lower

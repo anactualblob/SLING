@@ -74,6 +74,7 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
+        //Singleton assignment
         S = this;    
     }
 
@@ -88,10 +89,10 @@ public class GameManager : MonoBehaviour
 
         touchPositionAction = playerInput.actions["Position"];
 
-
+        // init ropes
         nbRopes = nbRopesStart;
 
-
+        // initial state
         State = GameState.notTouching;
     }
 
@@ -99,19 +100,6 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        // if state = swinging, rope.ropeStart = touchPosition
-        //if (State == GameState.touching)
-        //{
-        //    rope.ropeStart = touchPosition;
-        //}
-        //
-        //if (State == GameState.notTouching)
-        //{
-        //
-        //}
-
-        Debug.Log(nbRopes);
-
 
         switch (State)
         {
@@ -138,6 +126,8 @@ public class GameManager : MonoBehaviour
                 Debug.LogError("GameManager.cs : Invalid or unaccounted for game state.", this);
                 break;
         }
+
+
     }
 
 
@@ -167,6 +157,9 @@ public class GameManager : MonoBehaviour
             State = GameState.notTouching;
         }
     }
+
+
+
 
 
     public static void GainRopes(int nb)
