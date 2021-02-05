@@ -507,7 +507,7 @@ MonoBehaviour:
   mainCamera: {fileID: 519420030}
   ball: {fileID: 1370902337}
   rope: {fileID: 1363581767}
-  nbRopesStart: 1
+  nbRopesStart: 5
 --- !u!4 &718391952
 Transform:
   m_ObjectHideFlags: 0
@@ -717,19 +717,19 @@ LineRenderer:
   m_Positions: []
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 0.1
+    widthMultiplier: 0.08
     widthCurve:
       serializedVersion: 2
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0.8
+        value: 1
         inSlope: 0
         outSlope: 0
         tangentMode: 0
         weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
+        inWeight: 0
+        outWeight: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
@@ -762,8 +762,8 @@ LineRenderer:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
-    numCornerVertices: 0
-    numCapVertices: 0
+    numCornerVertices: 3
+    numCapVertices: 5
     alignment: 0
     textureMode: 0
     shadowBias: 0.5

@@ -28,6 +28,7 @@ public class GameManager : MonoBehaviour
 
 
     [SerializeField] CameraController mainCamera = null;
+    [SerializeField] BackgroundManager bgManager = null;
     [Space]
     [SerializeField] Ball ball = null;
     [SerializeField] Rope rope = null;
@@ -90,20 +91,58 @@ public class GameManager : MonoBehaviour
 
         touchPositionAction = playerInput.actions["Position"];
 
+
         // init ropes
         nbRopes = nbRopesStart;
 
         // initial state
         State = GameState.notTouching;
+
     }
 
+
+    /// <summary>
+    /// Called when game is over to reset the game state.
+    /// </summary>
+    void ResetGame()
+    {
+        // position ball
+        ball.gameObject.SetActive(true);
+        ball.InitBall();
+
+        // position rope 
+        rope.InitializeRope(Vector3.zero, Vector3.zero);
+        rope.gameObject.SetActive(false);
+
+        // init nb of ropes
+        nbRopes = nbRopesStart;
+
+        // reset height
+        maxBallHeight = 0;
+
+        // Camera reset
+        mainCamera.SetTargetPosition(Vector2.zero);
+
+        // Reset backgrounds
+        bgManager.InitBackgrounds();
+
+        // initial state
+        State = GameState.waitingToStart;
+
+
+
+        // etc.
+    }
 
 
     void Update()
     {
-
         switch (State)
         {
+            case GameState.waitingToStart:
+                
+                break;
+
             case GameState.touching:
                 rope.ropeStart = touchPosition;
                 break;
@@ -135,7 +174,7 @@ public class GameManager : MonoBehaviour
 
     void OnTouch(InputAction.CallbackContext ctx)
     {
-        if (nbRopes > 0 && State != GameState.gameOver)
+        if (nbRopes > 0 && (State == GameState.notTouching || State == GameState.waitingToStart))
         {
             rope.gameObject.SetActive(true);
             rope.InitializeRope(touchPosition, ball.transform.position);
@@ -150,7 +189,7 @@ public class GameManager : MonoBehaviour
 
     void OnTouchRelease(InputAction.CallbackContext ctx)
     {
-        if (State != GameState.gameOver)
+        if (State != GameState.gameOver && State != GameState.waitingToStart)
         {
             rope.gameObject.SetActive(false);
             ball.DetachFromRope();
@@ -160,6 +199,11 @@ public class GameManager : MonoBehaviour
     }
 
 
+
+    public void RestartGame()
+    {
+        ResetGame();
+    }
 
 
 
@@ -171,5 +215,21 @@ public class GameManager : MonoBehaviour
     public static void GameOver()
     {
         State = GameState.gameOver;
+
+        // deactivate ball
+        S.ball.gameObject.SetActive(false);
+    }
+
+
+
+
+    private void OnGUI()
+    {
+        GUILayout.Label("Remaining Ropes : " + nbRopes);
+        if (State == GameState.gameOver && GUILayout.Button("Restart game"))
+        {
+            RestartGame();
+        }
+
     }
 }

@@ -21,13 +21,23 @@ public class Ball : MonoBehaviour
 
 
 
-
+    
 
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         trail = GetComponent<TrailRenderer>();
+
+        InitBall();
+    }
+
+    // initial state of the ball (in the center, immovable, waiting for touch to attach to a rope)
+    public void InitBall()
+    {
+        transform.position = Vector3.zero;
+        positionHistory.Clear();
+        rb.bodyType = RigidbodyType2D.Kinematic;
     }
 
 
@@ -43,7 +53,6 @@ public class Ball : MonoBehaviour
         {
             trail.enabled = true;
         }
-
 
         
     }
@@ -62,11 +71,14 @@ public class Ball : MonoBehaviour
 
     public void AttachToRope(Rope rope)
     {
+        this.rope = rope;
+
         rb.bodyType = RigidbodyType2D.Kinematic;
         rb.gravityScale = 0;
         rb.velocity = Vector2.zero;
         rb.Sleep();
-        this.rope = rope;
+        rb.MovePosition(rope.attachPoint);
+
         attached = true;
     }
 
@@ -79,9 +91,8 @@ public class Ball : MonoBehaviour
         rb.velocity = (transform.position - positionHistory.Peek()) / (Time.deltaTime*positionHistoryLimit);
         
 
-        //Debug.DrawRay(transform.position, rb.velocity, Color.red, 10);
-
         attached = false;
     }
+
 
 }

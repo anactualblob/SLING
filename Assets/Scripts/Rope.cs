@@ -65,6 +65,28 @@ public class Rope : MonoBehaviour
         ConstrainSegments(false);
         DrawRope();
     }
+
+
+
+    public void InitializeRope(Vector3 ropeStartPos, Vector3 ropeEndPos)
+    {
+        ropeStart = ropeStartPos;
+        ropeEnd = ropeEndPos;
+
+        // set positions of the rope so that it's vertical
+        for (int i = 0; i < ropeSegments.Count; i++)
+        {
+            RopeSegment seg = ropeSegments[i];
+
+            seg.posNow = ropeStartPos + Vector3.down * i * ropeSegmentLength;
+            seg.posOld = ropeStartPos + Vector3.down * i * ropeSegmentLength;
+
+            ropeSegments[i] = seg;
+        }
+
+        // apply constraints with and make sure the end of the rope is pinned to ropeEnd
+        ConstrainSegments(true);
+    }
     
 
 
@@ -161,32 +183,6 @@ public class Rope : MonoBehaviour
         lineRenderer.positionCount = numberOfSegments;
         lineRenderer.SetPositions(ropePositions);
     }
-
-
-
-
-
-
-    public void InitializeRope(Vector3 ropeStartPos, Vector3 ropeEndPos)
-    {
-        ropeStart = ropeStartPos;
-        ropeEnd = ropeEndPos;
-
-        // set positions of the rope so that it's vertical
-        for (int i = 0; i < ropeSegments.Count; i++)
-        {
-            RopeSegment seg = ropeSegments[i];
-
-            seg.posNow = ropeStartPos + Vector3.down * i * ropeSegmentLength;
-            seg.posOld = ropeStartPos + Vector3.down * i * ropeSegmentLength;
-
-            ropeSegments[i] = seg;
-        }
-
-        // apply constraints with and make sure the end of the rope is pinned to ropeEnd
-        ConstrainSegments(true);
-    }
-
 
 
 
