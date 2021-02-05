@@ -293,6 +293,7 @@ GameObject:
   m_Component:
   - component: {fileID: 266644919}
   - component: {fileID: 266644920}
+  - component: {fileID: 266644921}
   m_Layer: 10
   m_Name: Killzone
   m_TagString: Killzone
@@ -340,6 +341,21 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 25, y: 20}
   m_EdgeRadius: 0
+--- !u!114 &266644921
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 266644918}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c227e9b3a3d26ea46a3f1b323a610d26, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  collisionMask:
+    serializedVersion: 2
+    m_Bits: 256
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -491,7 +507,7 @@ MonoBehaviour:
   mainCamera: {fileID: 519420030}
   ball: {fileID: 1370902337}
   rope: {fileID: 1363581767}
-  nbRopesStart: 5
+  nbRopesStart: 1
 --- !u!4 &718391952
 Transform:
   m_ObjectHideFlags: 0
@@ -594,6 +610,53 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 10, y: 20}
   m_EdgeRadius: 0
+--- !u!1 &1178087026
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1178087028}
+  - component: {fileID: 1178087027}
+  m_Layer: 0
+  m_Name: RopePickupPool
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1178087027
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1178087026}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 244a0e20db6db7c43a00b8b3d124155f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  objectToPool: {fileID: 6545775408944281247, guid: 6038e7956f3bb5b40915606c504e79e8,
+    type: 3}
+  poolSize: 10
+  setupPoolAtStart: 1
+--- !u!4 &1178087028
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1178087026}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1363581765
 GameObject:
   m_ObjectHideFlags: 0
@@ -1093,17 +1156,17 @@ PrefabInstance:
     - target: {fileID: 1832930458694188136, guid: 6038e7956f3bb5b40915606c504e79e8,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 1832930458694188136, guid: 6038e7956f3bb5b40915606c504e79e8,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 1832930458694188136, guid: 6038e7956f3bb5b40915606c504e79e8,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 1832930458694188136, guid: 6038e7956f3bb5b40915606c504e79e8,
         type: 3}
@@ -1113,7 +1176,7 @@ PrefabInstance:
     - target: {fileID: 1832930458694188136, guid: 6038e7956f3bb5b40915606c504e79e8,
         type: 3}
       propertyPath: m_RootOrder
-      value: 6
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 1832930458694188136, guid: 6038e7956f3bb5b40915606c504e79e8,
         type: 3}
@@ -1133,7 +1196,8 @@ PrefabInstance:
     - target: {fileID: 6545775408944281247, guid: 6038e7956f3bb5b40915606c504e79e8,
         type: 3}
       propertyPath: m_Name
-      value: RopePickup
+      value: (DEBUG)RopePickup
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: 6038e7956f3bb5b40915606c504e79e8, type: 3}

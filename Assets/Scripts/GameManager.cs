@@ -68,8 +68,9 @@ public class GameManager : MonoBehaviour
         
     }
 
-    float maxBallHeight = 0.0f;
 
+
+    float maxBallHeight = 0.0f;
 
 
     private void Awake()
@@ -134,7 +135,7 @@ public class GameManager : MonoBehaviour
 
     void OnTouch(InputAction.CallbackContext ctx)
     {
-        if (nbRopes > 0)
+        if (nbRopes > 0 && State != GameState.gameOver)
         {
             rope.gameObject.SetActive(true);
             rope.InitializeRope(touchPosition, ball.transform.position);
