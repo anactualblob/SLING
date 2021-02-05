@@ -24,29 +24,59 @@ public class GameManager : MonoBehaviour
 
 
     PlayerInput playerInput;
+    InputAction touchPositionAction;
 
+
+    [SerializeField] CameraController mainCamera = null;
+    [Space]
     [SerializeField] Ball ball = null;
     [SerializeField] Rope rope = null;
-    [SerializeField] UnityEngine.Camera mainCamera = null;
+    
 
-
-
-    bool touching = false;
     public static Vector2 touchPosition
     {
         get
         {
-            return S.mainCamera.ScreenToWorldPoint(S.touchPositionAction.ReadValue<Vector2>());
+            return S.mainCamera.cam.ScreenToWorldPoint(S.touchPositionAction.ReadValue<Vector2>());
         }
     }
 
 
-    InputAction touchPositionAction;
+    [Space]
+    [SerializeField]
+    int nbRopesStart = 5;
+    int nbRopes = 0;
+
+
+    public enum GameState
+    {
+        none,
+        menu,
+        waitingToStart,
+        touching,
+        notTouching,
+        gameOver
+    }
+    GameState _state;
+    public static GameState State 
+    {
+        get { return S._state; }
+        private set
+        {
+            S._state = value;
+        }
+        
+    }
+
+    float maxBallHeight = 0.0f;
+
+
 
     private void Awake()
     {
         S = this;    
     }
+
 
     void Start()
     {
@@ -57,6 +87,12 @@ public class GameManager : MonoBehaviour
         playerInput.actions["Touch"].canceled += OnTouchRelease;
 
         touchPositionAction = playerInput.actions["Position"];
+
+
+        nbRopes = nbRopesStart;
+
+
+        State = GameState.notTouching;
     }
 
 
@@ -64,36 +100,82 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         // if state = swinging, rope.ropeStart = touchPosition
-        if (touching)
+        //if (State == GameState.touching)
+        //{
+        //    rope.ropeStart = touchPosition;
+        //}
+        //
+        //if (State == GameState.notTouching)
+        //{
+        //
+        //}
+
+        Debug.Log(nbRopes);
+
+
+        switch (State)
         {
-            rope.ropeStart = touchPosition;
+            case GameState.touching:
+                rope.ropeStart = touchPosition;
+                break;
+
+            case GameState.notTouching:
+                if (ball.transform.position.y > maxBallHeight)
+                {
+                    maxBallHeight = ball.transform.position.y;
+                }
+                mainCamera.SetTargetPosition(Vector2.up * maxBallHeight);
+                break;
+
+            case GameState.gameOver:
+                Debug.Log("GameOver !");
+                break;
+
+
+
+            case GameState.none:
+            default:
+                Debug.LogError("GameManager.cs : Invalid or unaccounted for game state.", this);
+                break;
         }
     }
 
 
 
     void OnTouch(InputAction.CallbackContext ctx)
-    {        
-        rope.gameObject.SetActive(true);
-        rope.InitializeRope(Vector3.zero, ball.transform.position);
-        ball.AttachToRope(rope);
-        
-        touching = true;
+    {
+        if (nbRopes > 0)
+        {
+            rope.gameObject.SetActive(true);
+            rope.InitializeRope(touchPosition, ball.transform.position);
+            ball.AttachToRope(rope);
 
-        // substract 1 from remaining ropes
-        // set state to swinging
-        // etc.
+            State = GameState.touching;
+
+            nbRopes--;
+        }
     }
 
 
     void OnTouchRelease(InputAction.CallbackContext ctx)
     {
-        rope.gameObject.SetActive(false);
-        ball.DetachFromRope();
+        if (State != GameState.gameOver)
+        {
+            rope.gameObject.SetActive(false);
+            ball.DetachFromRope();
 
-        touching = false;
+            State = GameState.notTouching;
+        }
     }
 
 
+    public static void GainRopes(int nb)
+    {
+        S.nbRopes += nb;
+    }
 
+    public static void GameOver()
+    {
+        State = GameState.gameOver;
+    }
 }

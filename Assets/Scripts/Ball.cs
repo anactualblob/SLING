@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(Rigidbody2D), typeof(TrailRenderer))]
 public class Ball : MonoBehaviour
 {
     Rigidbody2D rb;
+    TrailRenderer trail;
 
     bool attached = false;
     Rope rope;
@@ -20,9 +21,13 @@ public class Ball : MonoBehaviour
 
 
 
+
+
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        trail = GetComponent<TrailRenderer>();
     }
 
 
@@ -32,6 +37,11 @@ public class Ball : MonoBehaviour
         if (attached)
         {
             rb.MovePosition(rope.attachPoint);
+            trail.enabled = false;
+        }
+        else
+        {
+            trail.enabled = true;
         }
 
 

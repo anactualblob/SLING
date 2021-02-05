@@ -177,8 +177,8 @@ public class Rope : MonoBehaviour
         {
             RopeSegment seg = ropeSegments[i];
 
-            seg.posNow = ropeStartPos + Vector3.down * i;
-            seg.posOld = Vector3.zero;
+            seg.posNow = ropeStartPos + Vector3.down * i * ropeSegmentLength;
+            seg.posOld = ropeStartPos + Vector3.down * i * ropeSegmentLength;
 
             ropeSegments[i] = seg;
         }
