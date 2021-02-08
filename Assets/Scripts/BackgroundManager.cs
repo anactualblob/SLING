@@ -51,7 +51,7 @@ public class BackgroundManager : MonoBehaviour
     void Update()
     {
         // if we're in the right state
-        if (GameManager.State == GameManager.GameState.notTouching)
+        if (GameManager.State == GameManager.GameState.notTouching || GameManager.State == GameManager.GameState.touching)
         {
             if (transform.position.y > (bg[lower].position.y + textureSize))
             {

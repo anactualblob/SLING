@@ -25,6 +25,14 @@ public class GameManager : MonoBehaviour
 
     PlayerInput playerInput;
     InputAction touchPositionAction;
+    public static Vector2 touchPosition
+    {
+        get
+        {
+            return S.mainCamera.cam.ScreenToWorldPoint(S.touchPositionAction.ReadValue<Vector2>());
+        }
+    }
+
 
 
     [SerializeField] CameraController mainCamera = null;
@@ -33,14 +41,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] Ball ball = null;
     [SerializeField] Rope rope = null;
     
-
-    public static Vector2 touchPosition
-    {
-        get
-        {
-            return S.mainCamera.cam.ScreenToWorldPoint(S.touchPositionAction.ReadValue<Vector2>());
-        }
-    }
 
 
     [Space]
@@ -96,9 +96,10 @@ public class GameManager : MonoBehaviour
         nbRopes = nbRopesStart;
 
         // initial state
-        State = GameState.notTouching;
+        State = GameState.waitingToStart;
 
     }
+
 
 
     /// <summary>
@@ -135,6 +136,7 @@ public class GameManager : MonoBehaviour
     }
 
 
+
     void Update()
     {
         switch (State)
@@ -156,7 +158,6 @@ public class GameManager : MonoBehaviour
                 break;
 
             case GameState.gameOver:
-                Debug.Log("GameOver !");
                 break;
 
 
@@ -169,6 +170,8 @@ public class GameManager : MonoBehaviour
 
 
     }
+
+
 
 
 
@@ -186,7 +189,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-
     void OnTouchRelease(InputAction.CallbackContext ctx)
     {
         if (State != GameState.gameOver && State != GameState.waitingToStart)
@@ -197,6 +199,7 @@ public class GameManager : MonoBehaviour
             State = GameState.notTouching;
         }
     }
+
 
 
 
@@ -225,10 +228,21 @@ public class GameManager : MonoBehaviour
 
     private void OnGUI()
     {
+        GUIStyle labelStyle = GUI.skin.GetStyle("label");
+        labelStyle.fontSize = 50;
+
+        GUIStyle buttonStyle = GUI.skin.GetStyle("button");
+        buttonStyle.fontSize = 50;
+
         GUILayout.Label("Remaining Ropes : " + nbRopes);
         if (State == GameState.gameOver && GUILayout.Button("Restart game"))
         {
             RestartGame();
+        }
+
+        if (State == GameState.waitingToStart)
+        {
+            GUILayout.Label("Touch to Start");
         }
 
     }
