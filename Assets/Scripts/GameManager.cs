@@ -230,16 +230,16 @@ public class GameManager : MonoBehaviour
     {
         GUIStyle labelStyle = GUI.skin.GetStyle("label");
         labelStyle.fontSize = 50;
-
+        
         GUIStyle buttonStyle = GUI.skin.GetStyle("button");
         buttonStyle.fontSize = 50;
-
+        
         GUILayout.Label("Remaining Ropes : " + nbRopes);
         if (State == GameState.gameOver && GUILayout.Button("Restart game"))
         {
             RestartGame();
         }
-
+        
         if (State == GameState.waitingToStart)
         {
             GUILayout.Label("Touch to Start");
