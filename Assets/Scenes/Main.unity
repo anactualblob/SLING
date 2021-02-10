@@ -397,7 +397,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cam: {fileID: 0}
-  hSize: 0
 --- !u!20 &519420031
 Camera:
   m_ObjectHideFlags: 0
@@ -506,6 +505,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainCamera: {fileID: 519420030}
   bgManager: {fileID: 519420033}
+  meshGen: {fileID: 1400499282}
   ball: {fileID: 1370902337}
   rope: {fileID: 1363581767}
   nbRopesStart: 5
@@ -1110,9 +1110,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   verticesPerUnit: 25
-  chunkSize: 10
+  chunkSize: 2
+  cameraCurrentHeight: 0
+  startingHeight: 0
+  cameraSize: {x: 0, y: 0}
   leftObstacleHolder: {fileID: 1572406681}
   rightObstacleHolder: {fileID: 2074281794}
+  startChunks: 7
+  scale: 2
 --- !u!1 &1572406681
 GameObject:
   m_ObjectHideFlags: 0

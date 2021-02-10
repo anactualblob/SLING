@@ -2,34 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//[RequireComponent(typeof(MeshFilter), typeof(EdgeCollider2D), typeof(MeshRenderer))]
+
 [RequireComponent(typeof(NoiseGenerator))]
 public class MeshGenerator : MonoBehaviour
 {
-
-    MeshFilter meshFilter;
-    EdgeCollider2D edgeCollider;
-
-    NoiseGenerator noiseGenerator;
-
-    [SerializeField] int verticesPerUnit = 10;
-    [SerializeField] int chunkSize = 10;
-
-    List<Vector3> vertices = new List<Vector3>();
-    List<Vector2> colliderPoints = new List<Vector2>();
-    List<int> triangles = new List<int>();
-
-    float currentHeight;
-    float[] noiseChunk = { };
-
-    Mesh mesh;
-
-    [SerializeField]
-    GameObject leftObstacleHolder = null;
-    [SerializeField]
-    GameObject rightObstacleHolder = null;
-
-
     protected class Obstacle
     {
         public MeshFilter meshFilter = null;
@@ -61,9 +37,58 @@ public class MeshGenerator : MonoBehaviour
 
             noiseChunk = new float[chunkLength];
         }
+
+
+        public void Reset()
+        {
+            randomNoiseOffset = Random.Range(0.0f, 100000.0f);
+            mesh = new Mesh();
+            mesh.name = "newerer mesh";
+
+            vertices.Clear();
+            triangles.Clear();
+            colliderPoints.Clear();
+        }
     }
 
     Obstacle left, right;
+
+    NoiseGenerator noiseGenerator;
+
+
+    [SerializeField] int verticesPerUnit = 10;
+    [SerializeField] int chunkSize = 10;
+    int verticesInChunk
+    {
+        get { return verticesPerUnit * chunkSize * 2; }
+    }
+
+    int nbChunks
+    {
+        get { return (int)((cameraSize.y / chunkSize * 2 + 2)+0.5); }
+    }
+
+
+    float currentHeight;
+
+    [HideInInspector] public float cameraCurrentHeight;
+    [HideInInspector] public float startingHeight;
+    [HideInInspector] public Vector2 cameraSize;
+
+
+    [Space]
+    [SerializeField]
+    GameObject leftObstacleHolder = null;
+    [SerializeField]
+    GameObject rightObstacleHolder = null;
+
+    [Header("Debug")]
+    [SerializeField] int startChunks = 0;
+    [Space]
+    [SerializeField] float scale = 1.0f;
+
+
+
 
 
     void Start()
@@ -72,46 +97,77 @@ public class MeshGenerator : MonoBehaviour
         right = new Obstacle(rightObstacleHolder, chunkSize * verticesPerUnit);
 
 
-        //mesh = new Mesh();
-        //mesh.name = "newer mesh";
-        //
-        //meshFilter = GetComponent<MeshFilter>();
-        //edgeCollider = GetComponent<EdgeCollider2D>();
-
         noiseGenerator = GetComponent<NoiseGenerator>();
+
+        SetupFirstObstacles();
+    }
+
+
+    private void Update()
+    {
+        // if cameraCurrentHeight - cameraSize.y > currentHeight - (nbchunks - 1)*chunkSize
+        // todo : figure out why it's "nbChunks + 1" instead of "nbChunks - 1"
+        if (cameraCurrentHeight - cameraSize.y > currentHeight - (nbChunks +1)*chunkSize)
+        {
+            BuildObstacles(startingHeight, cameraSize);
+        }
+    }
+
+
+    public void SetupFirstObstacles()
+    {
         currentHeight = transform.position.y;
+        left.Reset();
+        right.Reset();
 
-        noiseChunk = new float[chunkSize * verticesPerUnit];
+        for (int i = 0; i < nbChunks; i++)
+        {
+            BuildObstacles(startingHeight, cameraSize);
+        }
+    }
 
 
-        //GenerateMesh(Vector3.zero, true);
-        //GenerateMesh(Vector3.up * currentHeight, true);
 
-        GetAndProcessNoise(ref left.noiseChunk, 10.0f, currentHeight);
+    public void BuildObstacles(float startingHeight, Vector2 screenSize)
+    {
+        // left obstacle mesh
+        GetAndProcessNoise(ref left.noiseChunk, scale, left.randomNoiseOffset);
+        AddVertices(ref left, Vector3.left*screenSize.x + Vector3.up * (currentHeight + startingHeight));
 
-        AddVertices(ref left, Vector3.left);
+        if (left.vertices.Count > verticesInChunk * nbChunks)
+            RemoveBottomVertices(ref left, verticesInChunk);
+
         RebuildTriangles(ref left, left.vertices.Count);
         AssignMesh(ref left);
 
 
+        // right obstacle mesh
+        GetAndProcessNoise(ref right.noiseChunk, scale, right.randomNoiseOffset);
+        AddVertices(ref right, Vector3.right * screenSize.x + Vector3.up * (currentHeight + startingHeight), true);
 
-        GetAndProcessNoise(ref right.noiseChunk, 10.0f, currentHeight);
+        if (right.vertices.Count > verticesInChunk * nbChunks) 
+            RemoveBottomVertices(ref right, verticesInChunk);
 
-        AddVertices(ref right, Vector3.right, true);
         RebuildTriangles(ref right, right.vertices.Count);
         AssignMesh(ref right);
 
+
+        // new height
         currentHeight += chunkSize;
-
-
     }
-    
-    
-    void GetAndProcessNoise(ref float[] buffer, float scale, float startPoint = 0.0f)
-    {
-        noiseGenerator.GenerateNoiseChunk(ref buffer, startPoint, scale);
 
-        // process noise
+
+    
+    
+    
+
+
+
+    void GetAndProcessNoise(ref float[] buffer, float scale, float offset = 0.0f)
+    {
+        noiseGenerator.GenerateNoiseChunk(ref buffer, scale, offset, 3, 2, 0.5f);
+
+        // process noise in buffer
     }
 
 
@@ -137,10 +193,10 @@ public class MeshGenerator : MonoBehaviour
         }
     }
 
-    void RemoveVertices(ref Obstacle obs, int count)
+    void RemoveBottomVertices(ref Obstacle obs, int count)
     {
         obs.vertices.RemoveRange(0, count);
-        obs.colliderPoints.RemoveRange(0, count);
+        obs.colliderPoints.RemoveRange(0, count/2); // edge collider only has half the vertices because it's only curved edge
     }
 
 
@@ -165,6 +221,8 @@ public class MeshGenerator : MonoBehaviour
     {
         obs.mesh.SetVertices(obs.vertices);
         obs.mesh.triangles = obs.triangles.ToArray();
+
+        obs.mesh.RecalculateBounds();
 
         obs.meshFilter.sharedMesh = obs.mesh;
         obs.edgeCollider.points = obs.colliderPoints.ToArray();

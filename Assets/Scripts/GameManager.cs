@@ -22,7 +22,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-
+    
     PlayerInput playerInput;
     InputAction touchPositionAction;
     public static Vector2 touchPosition
@@ -37,6 +37,7 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] CameraController mainCamera = null;
     [SerializeField] BackgroundManager bgManager = null;
+    [SerializeField] MeshGenerator meshGen = null;
     [Space]
     [SerializeField] Ball ball = null;
     [SerializeField] Rope rope = null;
@@ -95,6 +96,9 @@ public class GameManager : MonoBehaviour
         // init ropes
         nbRopes = nbRopesStart;
 
+        // initial meshgen state (camera size, start position, etc.)
+        InitMeshGeneratorState();
+
         // initial state
         State = GameState.waitingToStart;
 
@@ -130,7 +134,8 @@ public class GameManager : MonoBehaviour
         // initial state
         State = GameState.waitingToStart;
 
-
+        InitMeshGeneratorState();
+        meshGen.SetupFirstObstacles();
 
         // etc.
     }
@@ -155,6 +160,7 @@ public class GameManager : MonoBehaviour
                     maxBallHeight = ball.transform.position.y;
                 }
                 mainCamera.SetTargetPosition(Vector2.up * maxBallHeight);
+                UpdateMeshGeneratorState();
                 break;
 
             case GameState.gameOver:
@@ -171,6 +177,21 @@ public class GameManager : MonoBehaviour
 
     }
 
+    void UpdateMeshGeneratorState()
+    {
+        meshGen.cameraCurrentHeight = mainCamera.transform.position.y;
+
+        // also update difficulty variables here
+    }
+
+    void InitMeshGeneratorState()
+    {
+        meshGen.cameraCurrentHeight = 0.0f;
+        meshGen.cameraSize = new Vector2(mainCamera.cam.orthographicSize * mainCamera.cam.aspect, mainCamera.cam.orthographicSize);
+        meshGen.startingHeight = -mainCamera.cam.orthographicSize;
+
+        // also initialize the difficulty variables here
+    }
 
 
 
@@ -210,9 +231,10 @@ public class GameManager : MonoBehaviour
 
 
 
-    public static void GainRopes(int nb)
+    public static void GainRopes(int nb, RopePickup pickup)
     {
         S.nbRopes += nb;
+        // return pickup to pool
     }
 
     public static void GameOver()
