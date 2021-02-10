@@ -30,11 +30,19 @@ public class RopePickup : MonoBehaviour
         Debug.Log("Pickup consumed");
         consumed = true;
 
-        // Tell GameManager to gain some ropes
-        GameManager.GainRopes(value);
-
         // disappear
 
         // spawn new FX possibly
+
+
+        // Tell GameManager to gain some ropes & return this pickup to the pool
+        GameManager.GainRopes(value, this);
+    }
+
+
+
+    private void OnEnable()
+    {
+        consumed = false;
     }
 }

@@ -11,7 +11,6 @@ public class CameraController : MonoBehaviour
     [HideInInspector]
     public Camera cam;
 
-    [SerializeField]
     float hSize;
 
 
