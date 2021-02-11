@@ -72,14 +72,13 @@ public class MeshGenerator : MonoBehaviour
     {
         get { return verticesPerUnit * chunkSize * 2; }
     }
-
     int nbChunks
     {
-        get { return (int)((cameraSize.y / chunkSize * 2 + 2)+0.5); }
+        get { return (int)((cameraSize.y*2 / (float)chunkSize)+ 1) + 1; }
     }
 
 
-    float currentHeight;
+    float buildHeight;
 
     [HideInInspector] public float cameraCurrentHeight;
     [HideInInspector] public float startingHeight;
@@ -96,6 +95,9 @@ public class MeshGenerator : MonoBehaviour
     [SerializeField] int startChunks = 0;
     [Space]
     [SerializeField] float scale = 1.0f;
+    [SerializeField] int octaves = 1;
+    [SerializeField] float lacunarity = 1.0f;
+    [SerializeField] float persistence = 0.5f;
 
 
 
@@ -115,11 +117,16 @@ public class MeshGenerator : MonoBehaviour
 
     private void Update()
     {
-        // if cameraCurrentHeight - cameraSize.y > currentHeight - (nbchunks - 1)*chunkSize
-        // todo : figure out why it's "nbChunks + 1" instead of "nbChunks - 1"
-        if (cameraCurrentHeight - cameraSize.y > currentHeight - (nbChunks +1)*chunkSize)
+        //Debug.Log("bottom : " + (currentHeight - nbChunks * chunkSize));
+        //Debug.Log("nbChunks: " + nbChunks);
+        //Debug.Log("Current height: " + currentHeight);
+        
+
+        
+        // if the bottom edge of the camera is higher than the bottom chunk of the obstacles
+        if (cameraCurrentHeight - cameraSize.y > buildHeight - (nbChunks - 1) *chunkSize)
         {
-            BuildObstacles(startingHeight, cameraSize);
+            BuildObstacles();
         }
     }
 
@@ -128,23 +135,23 @@ public class MeshGenerator : MonoBehaviour
 
     public void SetupFirstObstacles()
     {
-        currentHeight = transform.position.y;
+        buildHeight = transform.position.y - cameraSize.y;
         left.Reset();
         right.Reset();
 
         for (int i = 0; i < nbChunks; i++)
         {
-            BuildObstacles(startingHeight, cameraSize);
+            BuildObstacles();
         }
     }
 
 
 
-    public void BuildObstacles(float startingHeight, Vector2 screenSize)
+    public void BuildObstacles()
     {
         // left obstacle mesh
         GetAndProcessNoise(ref left.noiseChunk, scale, left.randomNoiseOffset);
-        AddVertices(ref left, Vector3.left*screenSize.x + Vector3.up * (currentHeight + startingHeight));
+        AddVertices(ref left, Vector3.left*cameraSize.x + Vector3.up * (buildHeight));
 
         if (left.vertices.Count > verticesInChunk * nbChunks)
             RemoveBottomVertices(ref left, verticesInChunk);
@@ -155,7 +162,7 @@ public class MeshGenerator : MonoBehaviour
 
         // right obstacle mesh
         GetAndProcessNoise(ref right.noiseChunk, scale, right.randomNoiseOffset);
-        AddVertices(ref right, Vector3.right * screenSize.x + Vector3.up * (currentHeight + startingHeight), true);
+        AddVertices(ref right, Vector3.right * cameraSize.x + Vector3.up * (buildHeight), true);
 
         if (right.vertices.Count > verticesInChunk * nbChunks) 
             RemoveBottomVertices(ref right, verticesInChunk);
@@ -165,7 +172,7 @@ public class MeshGenerator : MonoBehaviour
 
 
         // new height
-        currentHeight += chunkSize;
+        buildHeight += chunkSize;
     }
 
 
@@ -177,9 +184,14 @@ public class MeshGenerator : MonoBehaviour
 
     void GetAndProcessNoise(ref float[] buffer, float scale, float offset = 0.0f)
     {
-        noiseGenerator.GenerateNoiseChunk(ref buffer, scale, offset, 3, 2, 0.5f);
+        noiseGenerator.GenerateNoiseChunk(ref buffer, scale, offset, octaves,lacunarity, persistence);
 
         // process noise in buffer
+        for (int i = 0; i < buffer.Length; i++)
+        {
+            // TEMPORARY
+            buffer[i] *= 0.5f + 1.5f * buildHeight / 100;
+        }
     }
 
 
@@ -210,7 +222,7 @@ public class MeshGenerator : MonoBehaviour
     void RemoveBottomVertices(ref Obstacle obs, int count)
     {
         obs.vertices.RemoveRange(0, count);
-        obs.colliderPoints.RemoveRange(0, count/2); // edge collider only has half the vertices because it's only curved edge
+        obs.colliderPoints.RemoveRange(0, count/2); // edge collider points is only the "noisy" vertices
     }
 
 
