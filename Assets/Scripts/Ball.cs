@@ -18,6 +18,8 @@ public class Ball : MonoBehaviour
         "the difference between its position then and the oldest position in the history.")]
     [SerializeField] int positionHistoryLimit = 5;
 
+    LayerMask obstacleLayerMask = 0;
+
 
 
 
@@ -28,6 +30,8 @@ public class Ball : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         trail = GetComponent<TrailRenderer>();
+
+        obstacleLayerMask = LayerMask.GetMask("Obstacles");
 
         InitBall();
     }
@@ -84,14 +88,40 @@ public class Ball : MonoBehaviour
 
     public void DetachFromRope()
     {
+
+        
+
         rb.bodyType = RigidbodyType2D.Dynamic;
         rb.WakeUp();
         rb.gravityScale = 1;
 
         rb.velocity = (transform.position - positionHistory.Peek()) / (Time.deltaTime*positionHistoryLimit);
-        
+
+        GetOutOfObstacle();
 
         attached = false;
+    }
+
+
+    void GetOutOfObstacle()
+    {
+        RaycastHit2D hit1 = Physics2D.Raycast(transform.position, Vector2.left, 3.0f, obstacleLayerMask);
+        if(hit1 && hit1.collider.gameObject.tag == "ObsRight")
+        {
+            Debug.Log("in right collider");
+            transform.Translate(Vector3.left * (hit1.distance + 0.3f));
+        }
+        else
+        {
+            RaycastHit2D hit2 = Physics2D.Raycast(transform.position, Vector2.right, 3.0f, obstacleLayerMask);
+            if (hit2 && hit2.collider.gameObject.tag == "ObsLeft")
+            {
+                Debug.Log("in left collider");
+                transform.Translate(Vector3.right * (hit2.distance + 0.1f));
+            }
+        }
+
+        
     }
 
 

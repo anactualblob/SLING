@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Killzone
   - Pickup
+  - ObsLeft
+  - ObsRight
   layers:
   - Default
   - TransparentFX
@@ -19,7 +21,7 @@ TagManager:
   - Obstacles
   - Killzone
   - Pickups
-  - 
+  - Walls
   - 
   - 
   - 

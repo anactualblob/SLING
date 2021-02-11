@@ -10,6 +10,8 @@ public class MeshGenerator : MonoBehaviour
     {
         public MeshFilter meshFilter = null;
         public EdgeCollider2D edgeCollider = null;
+        //public PolygonCollider2D polyCollider = null;
+        //public MeshCollider meshCollider = null;
 
         public Mesh mesh = null;
 
@@ -24,12 +26,20 @@ public class MeshGenerator : MonoBehaviour
         {
             meshFilter = source.GetComponent<MeshFilter>();
             edgeCollider = source.GetComponent<EdgeCollider2D>();
+            //polyCollider = source.GetComponent<PolygonCollider2D>();
+            //meshCollider = source.GetComponent<MeshCollider>();
 
             if (meshFilter == null)
                 Debug.LogError("MeshGenerator.cs : Cannot create an obstacle from the given game object because it is missing a mesh filter.", source);
 
             if (edgeCollider == null)
-                Debug.LogError("MeshGenerator.cs : Cannot create an obstacle from the given game object because it is missing an edge collider 2D.", source);
+                Debug.LogError("MeshGenerator.cs : Cannot create an obstacle from the given game object because it is missing an EdgeCollider2D.", source);
+            
+            //if (polyCollider == null)
+            //    Debug.LogError("MeshGenerator.cs : Cannot create an obstacle from the given game object because it is missing a PolygonCollider2D.", source);
+            
+            //if (meshCollider == null)
+            //    Debug.LogError("MeshGenerator.cs : Cannot create an obstacle from the given game object because it is missing a MeshCollider.", source);
 
             randomNoiseOffset = Random.Range(0.0f, 100000.0f);
             mesh = new Mesh();
@@ -114,6 +124,8 @@ public class MeshGenerator : MonoBehaviour
     }
 
 
+
+
     public void SetupFirstObstacles()
     {
         currentHeight = transform.position.y;
@@ -181,10 +193,12 @@ public class MeshGenerator : MonoBehaviour
                 obs.colliderPoints.Add(offset + new Vector3(-obs.noiseChunk[i], i / (float)verticesPerUnit));
 
                 obs.vertices.Add(offset + new Vector3(0, i / (float)verticesPerUnit));
+                //obs.colliderPoints.Add(offset + new Vector3(0, i / (float)verticesPerUnit));
             }
             else
             {
                 obs.vertices.Add(offset + new Vector3(0, i / (float)verticesPerUnit));
+                //obs.colliderPoints.Add(offset + new Vector3(0, i / (float)verticesPerUnit));
 
                 obs.vertices.Add(offset + new Vector3(obs.noiseChunk[i], i / (float)verticesPerUnit));
                 obs.colliderPoints.Add(offset + new Vector3(obs.noiseChunk[i], i / (float)verticesPerUnit));
@@ -226,6 +240,28 @@ public class MeshGenerator : MonoBehaviour
 
         obs.meshFilter.sharedMesh = obs.mesh;
         obs.edgeCollider.points = obs.colliderPoints.ToArray();
+
+        //obs.polyCollider.points = obs.colliderPoints.ToArray();
+        //obs.meshCollider.sharedMesh = obs.mesh;
+        //Vector2[] transformedColliderPoints = new Vector2[obs.colliderPoints.Count];
+        //int startPointer = 0;
+        //int endpointer = transformedColliderPoints.Length-1;
+        //for (int i = 0; i < transformedColliderPoints.Length; i++)
+        //{
+        //    if (i%2 == 0)
+        //    {
+        //        transformedColliderPoints[startPointer++] = obs.colliderPoints[i];
+        //        
+        //    }
+        //    else
+        //    {
+        //        transformedColliderPoints[endpointer--] = obs.colliderPoints[i];
+        //    }
+        //}
+        //
+        //obs.polyCollider.points = transformedColliderPoints;
+
+        
     }
 
 

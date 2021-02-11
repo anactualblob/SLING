@@ -508,7 +508,7 @@ MonoBehaviour:
   meshGen: {fileID: 1400499282}
   ball: {fileID: 1370902337}
   rope: {fileID: 1363581767}
-  nbRopesStart: 5
+  nbRopesStart: 100
 --- !u!4 &718391952
 Transform:
   m_ObjectHideFlags: 0
@@ -564,7 +564,7 @@ GameObject:
   m_Component:
   - component: {fileID: 823799463}
   - component: {fileID: 823799465}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: rightWall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1004,7 +1004,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1388924310}
   - component: {fileID: 1388924309}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: leftWall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1118,6 +1118,9 @@ MonoBehaviour:
   rightObstacleHolder: {fileID: 2074281794}
   startChunks: 7
   scale: 2
+  octaves: 1
+  lacunarity: 2
+  persistence: 0.5
 --- !u!1 &1572406681
 GameObject:
   m_ObjectHideFlags: 0
@@ -1129,32 +1132,14 @@ GameObject:
   - component: {fileID: 1572406685}
   - component: {fileID: 1572406684}
   - component: {fileID: 1572406683}
-  - component: {fileID: 1572406682}
+  - component: {fileID: 1572406686}
   m_Layer: 9
   m_Name: LeftObstacles
-  m_TagString: Untagged
+  m_TagString: ObsLeft
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!68 &1572406682
-EdgeCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1572406681}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_EdgeRadius: 0
-  m_Points:
-  - {x: -0.5, y: 0}
-  - {x: 0.5, y: 0}
 --- !u!23 &1572406683
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1216,6 +1201,24 @@ Transform:
   m_Father: {fileID: 1400499281}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!68 &1572406686
+EdgeCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1572406681}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_EdgeRadius: 0
+  m_Points:
+  - {x: -0.5, y: 0}
+  - {x: 0.5, y: 0}
 --- !u!1 &1892278573
 GameObject:
   m_ObjectHideFlags: 0
@@ -1308,32 +1311,14 @@ GameObject:
   - component: {fileID: 2074281798}
   - component: {fileID: 2074281797}
   - component: {fileID: 2074281796}
-  - component: {fileID: 2074281795}
+  - component: {fileID: 2074281799}
   m_Layer: 9
   m_Name: RightObstacles
-  m_TagString: Untagged
+  m_TagString: ObsRight
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!68 &2074281795
-EdgeCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2074281794}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_EdgeRadius: 0
-  m_Points:
-  - {x: -0.5, y: 0}
-  - {x: 0.5, y: 0}
 --- !u!23 &2074281796
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1395,6 +1380,24 @@ Transform:
   m_Father: {fileID: 1400499281}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!68 &2074281799
+EdgeCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2074281794}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_EdgeRadius: 0
+  m_Points:
+  - {x: -0.5, y: 0}
+  - {x: 0.5, y: 0}
 --- !u!1001 &4372440849110383274
 PrefabInstance:
   m_ObjectHideFlags: 0
