@@ -10,6 +10,7 @@ public class NoiseGenerator : MonoBehaviour
 
     void Awake()
     {
+        y = Random.Range(1.0f, 1000000.0f);
     }
 
     public void GenerateNoiseChunk(ref float[] buffer, float noiseScale, float offset, int octaves = 1, float lacunarity = 1.0f, float persistence = 1.0f)

@@ -62,7 +62,6 @@ public class MeshGenerator : MonoBehaviour
     }
 
     Obstacle left, right;
-
     NoiseGenerator noiseGenerator;
 
 
@@ -72,6 +71,10 @@ public class MeshGenerator : MonoBehaviour
     {
         get { return verticesPerUnit * chunkSize * 2; }
     }
+    
+    /// <summary>
+    /// number of chunks of an obstacle at any given time
+    /// </summary>
     int nbChunks
     {
         get { return (int)((cameraSize.y*2 / (float)chunkSize)+ 1) + 1; }
@@ -80,6 +83,8 @@ public class MeshGenerator : MonoBehaviour
 
     float buildHeight;
 
+
+    // state from game manager
     [HideInInspector] public float cameraCurrentHeight;
     [HideInInspector] public float startingHeight;
     [HideInInspector] public Vector2 cameraSize;
@@ -92,9 +97,8 @@ public class MeshGenerator : MonoBehaviour
     GameObject rightObstacleHolder = null;
 
     [Header("Debug")]
-    [SerializeField] int startChunks = 0;
-    [Space]
     [SerializeField] float scale = 1.0f;
+    [Space]
     [SerializeField] int octaves = 1;
     [SerializeField] float lacunarity = 1.0f;
     [SerializeField] float persistence = 0.5f;
@@ -108,8 +112,9 @@ public class MeshGenerator : MonoBehaviour
         left = new Obstacle(leftObstacleHolder, chunkSize * verticesPerUnit);
         right = new Obstacle(rightObstacleHolder, chunkSize * verticesPerUnit);
 
-
         noiseGenerator = GetComponent<NoiseGenerator>();
+
+
 
         SetupFirstObstacles();
     }
@@ -117,13 +122,7 @@ public class MeshGenerator : MonoBehaviour
 
     private void Update()
     {
-        //Debug.Log("bottom : " + (currentHeight - nbChunks * chunkSize));
-        //Debug.Log("nbChunks: " + nbChunks);
-        //Debug.Log("Current height: " + currentHeight);
-        
-
-        
-        // if the bottom edge of the camera is higher than the bottom chunk of the obstacles
+        // if the bottom edge of the camera is higher than the bottom chunk of the obstacles, build new obstacles
         if (cameraCurrentHeight - cameraSize.y > buildHeight - (nbChunks - 1) *chunkSize)
         {
             BuildObstacles();
@@ -190,7 +189,7 @@ public class MeshGenerator : MonoBehaviour
         for (int i = 0; i < buffer.Length; i++)
         {
             // TEMPORARY
-            buffer[i] *= 0.5f + 1.5f * buildHeight / 100;
+            buffer[i] *= 0.5f + 1.0f * buildHeight / 100;
         }
     }
 

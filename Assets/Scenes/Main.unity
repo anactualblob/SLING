@@ -506,6 +506,7 @@ MonoBehaviour:
   mainCamera: {fileID: 519420030}
   bgManager: {fileID: 519420033}
   meshGen: {fileID: 1400499282}
+  ropePickupPool: {fileID: 1178087027}
   ball: {fileID: 1370902337}
   rope: {fileID: 1363581767}
   nbRopesStart: 100
@@ -642,8 +643,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   objectToPool: {fileID: 6545775408944281247, guid: 6038e7956f3bb5b40915606c504e79e8,
     type: 3}
+  setupPoolAtStart: 0
   poolSize: 10
-  setupPoolAtStart: 1
 --- !u!4 &1178087028
 Transform:
   m_ObjectHideFlags: 0
@@ -1109,14 +1110,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03e530242ee43f948912ba20c2a18fe6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  verticesPerUnit: 25
+  verticesPerUnit: 15
   chunkSize: 2
   cameraCurrentHeight: 0
   startingHeight: 0
   cameraSize: {x: 0, y: 0}
   leftObstacleHolder: {fileID: 1572406681}
   rightObstacleHolder: {fileID: 2074281794}
-  startChunks: 7
   scale: 2
   octaves: 1
   lacunarity: 2

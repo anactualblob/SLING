@@ -7,10 +7,11 @@ public class GameObjectPool : MonoBehaviour
 {
     [SerializeField]
     GameObject objectToPool = null;
-    [SerializeField]
-    int poolSize = 0;
+    [Space]
     [SerializeField]
     bool setupPoolAtStart = true;
+    [SerializeField] [Tooltip("Only used if setupPoolAtStart is true.")]
+    int poolSize = 0;
 
 
     GameObject[] pool = { };

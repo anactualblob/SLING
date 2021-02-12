@@ -38,6 +38,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] CameraController mainCamera = null;
     [SerializeField] BackgroundManager bgManager = null;
     [SerializeField] MeshGenerator meshGen = null;
+    [SerializeField] GameObjectPool ropePickupPool = null;
     [Space]
     [SerializeField] Ball ball = null;
     [SerializeField] Rope rope = null;
@@ -101,6 +102,13 @@ public class GameManager : MonoBehaviour
 
         // initial state
         State = GameState.waitingToStart;
+
+        ropePickupPool.SetupPool(10);
+
+        // DEBUG
+        GameObject p = ropePickupPool.TakeFromPool();
+        if (p != null) p.transform.position = Vector3.up * 3; 
+        else Debug.Log("game object null");
 
     }
 
@@ -193,6 +201,56 @@ public class GameManager : MonoBehaviour
         // also initialize the difficulty variables here
     }
 
+    
+    Vector2 SpawnPickupInEmptySpace(float height)
+    {
+        Vector2 spawnPos = Vector2.zero;
+
+        float cameraHSize = mainCamera.cam.orthographicSize * mainCamera.cam.aspect;
+
+        RaycastHit2D[] hits = Physics2D.RaycastAll(new Vector2(-cameraHSize, height), Vector2.right, cameraHSize * 2, LayerMask.GetMask("Obstacles"));
+
+        float distToMiddle = 0;
+        switch (hits.Length)
+        {
+            case 2:
+                // find middle point between 2 obstacles
+                distToMiddle = (hits[1].distance - hits[0].distance) / 2;
+                spawnPos = new Vector2(-cameraHSize + hits[0].distance + distToMiddle, height);
+                break;
+
+            case 0:
+                // spawn in the middle between 2 borders
+                spawnPos = new Vector2(0.0f, height);
+                break;
+
+
+            case 1:
+                // spawn in the middle between existing hit and other border
+                // do some tag checking to see which obstacle was hit
+                if (hits[0].collider.gameObject.CompareTag("ObsLeft"))
+                {
+                    distToMiddle = (cameraHSize * 2 - hits[0].distance) / 2;
+                    spawnPos = new Vector2(-cameraHSize + hits[0].distance + distToMiddle, height);
+                }
+                else
+                {
+                    distToMiddle = hits[0].distance / 2;
+                    spawnPos = new Vector2(-cameraHSize + distToMiddle, height);
+                }
+                break;
+
+
+            default:
+                Debug.LogError("GameManager.cs : Couldn't find a spawn point for rope pickup because there were too many raycast hits.", this);
+                spawnPos = -Vector2.one;
+                break;
+        }
+
+
+        return spawnPos;
+    }
+
 
 
 
@@ -235,6 +293,7 @@ public class GameManager : MonoBehaviour
     {
         S.nbRopes += nb;
         // return pickup to pool
+        S.ropePickupPool.ReturnToPool(pickup.gameObject, true);
     }
 
     public static void GameOver()
