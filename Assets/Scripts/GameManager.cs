@@ -34,7 +34,7 @@ public class GameManager : MonoBehaviour
     }
 
 
-
+    [Header("Scene Objects")]
     [SerializeField] CameraController mainCamera = null;
     [SerializeField] BackgroundManager bgManager = null;
     [SerializeField] MeshGenerator meshGen = null;
@@ -45,7 +45,7 @@ public class GameManager : MonoBehaviour
     
 
 
-    [Space]
+    [Header("Ropes")]
     [SerializeField]
     int nbRopesStart = 5;
     int nbRopes = 0;
@@ -75,8 +75,10 @@ public class GameManager : MonoBehaviour
 
     float maxBallHeight = 0.0f;
 
-
+    [Space]
     [SerializeField] float distanceBetweenRopePickups = 10.0f;
+    [SerializeField] float ropePickupSpawnHeightAboveBall = 5.0f;
+
     float lastRopePickupHeight = 0.0f;
 
 
@@ -107,12 +109,8 @@ public class GameManager : MonoBehaviour
         // initial state
         State = GameState.waitingToStart;
 
+        // setup the object pool for the rope pickups with a size of 10
         ropePickupPool.SetupPool(10);
-
-        // DEBUG
-        GameObject p = ropePickupPool.TakeFromPool();
-        if (p != null) p.transform.position = Vector3.up * 3; 
-        else Debug.Log("game object null");
 
     }
 
@@ -142,6 +140,10 @@ public class GameManager : MonoBehaviour
 
         // Reset backgrounds
         bgManager.InitBackgrounds();
+
+        // Reset the rope pickup pool and height
+        ropePickupPool.ReturnAllToPool();
+        lastRopePickupHeight = 0.0f;
 
         // initial state
         State = GameState.waitingToStart;
@@ -176,12 +178,21 @@ public class GameManager : MonoBehaviour
                 mainCamera.SetTargetPosition(Vector2.up * maxBallHeight);
 
 
-                if (maxBallHeight + 3.0f > lastRopePickupHeight + distanceBetweenRopePickups)
+                if (maxBallHeight + ropePickupSpawnHeightAboveBall > lastRopePickupHeight + distanceBetweenRopePickups)
                 {
-                    // get a pickup from the pool and immediately set its position to a suitable point, 10.0f units above the ball.
-                    ropePickupPool.TakeFromPool().transform.position = meshGen.GetPointBetweenObstacles(maxBallHeight + 3.0f);
+                    // get a new pickup from the pool
+                    GameObject pickup = ropePickupPool.TakeFromPool();
+                    if (pickup == null)
+                    {
+                        // return all pickups to pool and take from pool again   
+                        ropePickupPool.ReturnAllToPool();
+                        pickup = ropePickupPool.TakeFromPool();
+                    }
 
-                    lastRopePickupHeight = maxBallHeight + 3.0f;
+                    // set pickup position to a suitable point, 10.0f units above the ball.
+                    pickup.transform.position = meshGen.GetPointBetweenObstacles(maxBallHeight + ropePickupSpawnHeightAboveBall);
+
+                    lastRopePickupHeight = maxBallHeight + ropePickupSpawnHeightAboveBall;
                 }
                 UpdateMeshGeneratorState();
                 break;

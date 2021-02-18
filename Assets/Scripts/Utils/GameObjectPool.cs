@@ -115,6 +115,18 @@ public class GameObjectPool : MonoBehaviour
         returnedObj.SetActive(false);
         --index;
     }
+
+    /// <summary>
+    /// Return all of this pool's objects to it. 
+    /// </summary>
+    public void ReturnAllToPool()
+    {
+        for (int i = pool.Length-1; i>=0; i--)
+        {
+            ReturnToPool(pool[i]);
+        }
+        index = 0;
+    }
     #endregion
 
 
@@ -167,13 +179,15 @@ public class GameObjectPool : MonoBehaviour
     [ContextMenu("DEBUG: Return All Objects")]
     void ReturnAllObjects()
     {
-        foreach (GameObject go in objectsTakenOut)
-        {
-            ReturnToPool(go, true);
-        }
-        objectsTakenOut.Clear();
 
-        Debug.Log("index: " + index);
+        ReturnAllToPool();
+        //foreach (GameObject go in objectsTakenOut)
+        //{
+        //    ReturnToPool(go, true);
+        //}
+        //objectsTakenOut.Clear();
+        //
+        //Debug.Log("index: " + index);
     }
 
 #endif
