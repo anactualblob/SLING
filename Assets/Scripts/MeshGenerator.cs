@@ -10,8 +10,6 @@ public class MeshGenerator : MonoBehaviour
     {
         public MeshFilter meshFilter = null;
         public EdgeCollider2D edgeCollider = null;
-        //public PolygonCollider2D polyCollider = null;
-        //public MeshCollider meshCollider = null;
 
         public Mesh mesh = null;
 
@@ -26,8 +24,6 @@ public class MeshGenerator : MonoBehaviour
         {
             meshFilter = source.GetComponent<MeshFilter>();
             edgeCollider = source.GetComponent<EdgeCollider2D>();
-            //polyCollider = source.GetComponent<PolygonCollider2D>();
-            //meshCollider = source.GetComponent<MeshCollider>();
 
             if (meshFilter == null)
                 Debug.LogError("MeshGenerator.cs : Cannot create an obstacle from the given game object because it is missing a mesh filter.", source);
@@ -35,11 +31,6 @@ public class MeshGenerator : MonoBehaviour
             if (edgeCollider == null)
                 Debug.LogError("MeshGenerator.cs : Cannot create an obstacle from the given game object because it is missing an EdgeCollider2D.", source);
             
-            //if (polyCollider == null)
-            //    Debug.LogError("MeshGenerator.cs : Cannot create an obstacle from the given game object because it is missing a PolygonCollider2D.", source);
-            
-            //if (meshCollider == null)
-            //    Debug.LogError("MeshGenerator.cs : Cannot create an obstacle from the given game object because it is missing a MeshCollider.", source);
 
             randomNoiseOffset = Random.Range(0.0f, 100000.0f);
             mesh = new Mesh();
@@ -115,7 +106,6 @@ public class MeshGenerator : MonoBehaviour
         noiseGenerator = GetComponent<NoiseGenerator>();
 
 
-
         SetupFirstObstacles();
     }
 
@@ -176,8 +166,32 @@ public class MeshGenerator : MonoBehaviour
 
 
     
-    
-    
+    public Vector2 GetPointBetweenObstacles(float height)
+    {
+        Vector2 pos;
+
+        // find index using left obstacle values, colliderPoints should be the same length on both                
+        int index = left.colliderPoints.Count-1; // index points to the top of the colliders
+        if (height >= buildHeight)
+        {
+            // log an error but pos will be between the top points of the colliders
+            Debug.LogWarning("MeshGenerator.cs : Cannot find a point between obstacles at height " + height + " because obstacles haven't been built this high yet.");
+        }
+        else
+        {
+            float diff = buildHeight - height;
+            index -= (int)(diff * verticesPerUnit);
+            // index points to the point closest to height in the colliders
+        }
+
+        // get the middle point between the points in left and right collider at index
+        Vector2 leftPos = left.colliderPoints[index];
+        Vector2 rightPos = right.colliderPoints[index];
+
+        pos = (leftPos + rightPos) / 2.0f;
+
+        return pos;
+    }
 
 
 
@@ -192,7 +206,6 @@ public class MeshGenerator : MonoBehaviour
             buffer[i] *= 0.5f + 1.0f * buildHeight / 100;
         }
     }
-
 
     void AddVertices(ref Obstacle obs, Vector3 offset, bool faceLeft = false)
     {
@@ -224,7 +237,6 @@ public class MeshGenerator : MonoBehaviour
         obs.colliderPoints.RemoveRange(0, count/2); // edge collider points is only the "noisy" vertices
     }
 
-
     void RebuildTriangles(ref Obstacle obs, int verticesCount)
     {
         obs.triangles.Clear();
@@ -250,29 +262,7 @@ public class MeshGenerator : MonoBehaviour
         obs.mesh.RecalculateBounds();
 
         obs.meshFilter.sharedMesh = obs.mesh;
-        obs.edgeCollider.points = obs.colliderPoints.ToArray();
-
-        //obs.polyCollider.points = obs.colliderPoints.ToArray();
-        //obs.meshCollider.sharedMesh = obs.mesh;
-        //Vector2[] transformedColliderPoints = new Vector2[obs.colliderPoints.Count];
-        //int startPointer = 0;
-        //int endpointer = transformedColliderPoints.Length-1;
-        //for (int i = 0; i < transformedColliderPoints.Length; i++)
-        //{
-        //    if (i%2 == 0)
-        //    {
-        //        transformedColliderPoints[startPointer++] = obs.colliderPoints[i];
-        //        
-        //    }
-        //    else
-        //    {
-        //        transformedColliderPoints[endpointer--] = obs.colliderPoints[i];
-        //    }
-        //}
-        //
-        //obs.polyCollider.points = transformedColliderPoints;
-
-        
+        obs.edgeCollider.points = obs.colliderPoints.ToArray();        
     }
 
 

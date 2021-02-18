@@ -309,7 +309,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 266644918}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -16.5, z: 0}
+  m_LocalPosition: {x: 0, y: -16.5, z: 10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 519420032}
@@ -510,6 +510,7 @@ MonoBehaviour:
   ball: {fileID: 1370902337}
   rope: {fileID: 1363581767}
   nbRopesStart: 100
+  distanceBetweenRopePickups: 20
 --- !u!4 &718391952
 Transform:
   m_ObjectHideFlags: 0
