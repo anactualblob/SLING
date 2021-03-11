@@ -166,7 +166,7 @@ public class MeshGenerator : MonoBehaviour
 
 
     
-    public Vector2 GetPointBetweenObstacles(float height)
+    public Vector2 GetPointBetweenObstacles(float height, float lerp = 0.5f)
     {
         Vector2 pos;
 
@@ -184,11 +184,12 @@ public class MeshGenerator : MonoBehaviour
             // index points to the point closest to height in the colliders
         }
 
-        // get the middle point between the points in left and right collider at index
+        // get a point between the points in left and right collider at index with a lerp
         Vector2 leftPos = left.colliderPoints[index];
         Vector2 rightPos = right.colliderPoints[index];
 
-        pos = (leftPos + rightPos) / 2.0f;
+
+        pos = Vector2.Lerp(leftPos, rightPos, lerp);
 
         return pos;
     }

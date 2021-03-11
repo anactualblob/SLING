@@ -15,7 +15,7 @@
                 },
                 {
                     "name": "Position",
-                    "type": "Value",
+                    "type": "PassThrough",
                     "id": "ffdf3277-0c15-4008-8fbd-335d961c790a",
                     "expectedControlType": "Vector2",
                     "processors": "",
@@ -41,6 +41,17 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
+                    "action": "Touch",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "5cfb4fe3-c92e-4809-a8d4-561bd8ea70a4",
+                    "path": "<Pointer>/press",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Touch;Keyboard&Mouse",
                     "action": "Touch",
                     "isComposite": false,
                     "isPartOfComposite": false

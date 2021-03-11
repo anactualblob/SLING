@@ -22,7 +22,8 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    
+
+    UIManager uiManager;
     PlayerInput playerInput;
     InputAction touchPositionAction;
     public static Vector2 touchPosition
@@ -46,8 +47,7 @@ public class GameManager : MonoBehaviour
 
 
     [Header("Ropes")]
-    [SerializeField]
-    int nbRopesStart = 5;
+    [SerializeField] int nbRopesStart = 5;
     int nbRopes = 0;
 
 
@@ -67,8 +67,24 @@ public class GameManager : MonoBehaviour
         private set
         {
             S._state = value;
+
+            switch (value)
+            {
+                case GameState.waitingToStart:
+                    S.uiManager.ShowStartCanvas();
+                    break;
+                case GameState.touching:
+                    S.uiManager.ShowGameCanvas();
+                    break;
+                case GameState.notTouching:
+                    S.uiManager.ShowGameCanvas();
+                    break;
+                case GameState.gameOver:
+                    S.uiManager.ShowGameOverCanvas();
+                    break;
+            }
         }
-        
+
     }
 
 
@@ -85,15 +101,16 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         //Singleton assignment
-        S = this;    
+        S = this;
+
+        playerInput = GetComponent<PlayerInput>();
+        uiManager = GetComponent<UIManager>();
     }
 
 
     void Start()
     {
         // input setup , wire events and such
-        playerInput = GetComponent<PlayerInput>();
-
         playerInput.actions["Touch"].started += OnTouch;
         playerInput.actions["Touch"].canceled += OnTouchRelease;
 
@@ -111,6 +128,7 @@ public class GameManager : MonoBehaviour
 
         // setup the object pool for the rope pickups with a size of 10
         ropePickupPool.SetupPool(10);
+
 
     }
 
@@ -148,10 +166,14 @@ public class GameManager : MonoBehaviour
         // initial state
         State = GameState.waitingToStart;
 
+        // reset display
+        uiManager.DisplayRopes(nbRopesStart);
+        uiManager.DisplayScore(0);
+
+        // init mesh generator
         InitMeshGeneratorState();
         meshGen.SetupFirstObstacles();
 
-        // etc.
     }
 
 
@@ -174,6 +196,7 @@ public class GameManager : MonoBehaviour
                 if (ball.transform.position.y > maxBallHeight)
                 {
                     maxBallHeight = ball.transform.position.y;
+                    uiManager.DisplayScore((int)maxBallHeight);
                 }
                 mainCamera.SetTargetPosition(Vector2.up * maxBallHeight);
 
@@ -189,8 +212,8 @@ public class GameManager : MonoBehaviour
                         pickup = ropePickupPool.TakeFromPool();
                     }
 
-                    // set pickup position to a suitable point, 10.0f units above the ball.
-                    pickup.transform.position = meshGen.GetPointBetweenObstacles(maxBallHeight + ropePickupSpawnHeightAboveBall);
+                    // set pickup position to a suitable point, 10.0f units above the ball
+                    pickup.transform.position = meshGen.GetPointBetweenObstacles(maxBallHeight + ropePickupSpawnHeightAboveBall, Random.Range(0.25f, 0.75f));
 
                     lastRopePickupHeight = maxBallHeight + ropePickupSpawnHeightAboveBall;
                 }
@@ -239,9 +262,11 @@ public class GameManager : MonoBehaviour
             rope.InitializeRope(touchPosition, ball.transform.position);
             ball.AttachToRope(rope);
 
+
             State = GameState.touching;
 
             nbRopes--;
+            uiManager.DisplayRopes(nbRopes);
         }
     }
 
@@ -259,9 +284,9 @@ public class GameManager : MonoBehaviour
 
 
 
-    public void RestartGame()
+    static public void RestartGame()
     {
-        ResetGame();
+        S.ResetGame();
     }
 
 
@@ -269,6 +294,8 @@ public class GameManager : MonoBehaviour
     public static void GainRopes(int nb, RopePickup pickup)
     {
         S.nbRopes += nb;
+        S.uiManager.DisplayRopes(S.nbRopes);
+
         // return pickup to pool
         S.ropePickupPool.ReturnToPool(pickup.gameObject, true);
     }
@@ -286,22 +313,22 @@ public class GameManager : MonoBehaviour
 
     private void OnGUI()
     {
-        GUIStyle labelStyle = GUI.skin.GetStyle("label");
-        labelStyle.fontSize = 50;
-        
-        GUIStyle buttonStyle = GUI.skin.GetStyle("button");
-        buttonStyle.fontSize = 50;
-        
-        GUILayout.Label("Remaining Ropes : " + nbRopes);
-        if (State == GameState.gameOver && GUILayout.Button("Restart game"))
-        {
-            RestartGame();
-        }
-        
-        if (State == GameState.waitingToStart)
-        {
-            GUILayout.Label("Touch to Start");
-        }
+        //GUIStyle labelStyle = GUI.skin.GetStyle("label");
+        //labelStyle.fontSize = 50;
+        //
+        //GUIStyle buttonStyle = GUI.skin.GetStyle("button");
+        //buttonStyle.fontSize = 50;
+        //
+        //GUILayout.Label("Remaining Ropes : " + nbRopes);
+        //if (State == GameState.gameOver && GUILayout.Button("Restart game"))
+        //{
+        //    RestartGame();
+        //}
+        //
+        //if (State == GameState.waitingToStart)
+        //{
+        //    GUILayout.Label("Touch to Start");
+        //}
 
     }
 }

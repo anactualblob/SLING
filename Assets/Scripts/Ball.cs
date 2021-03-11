@@ -21,7 +21,8 @@ public class Ball : MonoBehaviour
     LayerMask obstacleLayerMask = 0;
 
 
-
+    [SerializeField]
+    float maxVelocity = 10.0f;
 
     
 
@@ -96,6 +97,11 @@ public class Ball : MonoBehaviour
         rb.gravityScale = 1;
 
         rb.velocity = (transform.position - positionHistory.Peek()) / (Time.deltaTime*positionHistoryLimit);
+
+       if (rb.velocity.magnitude > maxVelocity)
+       {
+           rb.velocity = rb.velocity.normalized * maxVelocity;
+       }
 
         GetOutOfObstacle();
 
