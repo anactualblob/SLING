@@ -87,12 +87,25 @@ public class MeshGenerator : MonoBehaviour
     [SerializeField]
     GameObject rightObstacleHolder = null;
 
-    [Header("Debug")]
-    [SerializeField] float scale = 1.0f;
+    [Header("Height Values")]
+    [SerializeField] float startChunkHeight = 0.5f;
+    [SerializeField] float startBumpHeight = 1.0f;
     [Space]
-    [SerializeField] int octaves = 1;
-    [SerializeField] float lacunarity = 1.0f;
-    [SerializeField] float persistence = 0.5f;
+    [SerializeField] float maxChunkHeight = 1.5f;
+    [SerializeField] float maxBumpHeight = 0.5f;
+
+
+    
+    float scale = 2.0f;
+    
+    int octaves = 1;
+    float lacunarity = 2.0f;
+    float persistence = 0.5f;
+
+
+
+
+
 
 
 
@@ -200,21 +213,37 @@ public class MeshGenerator : MonoBehaviour
     {
         noiseGenerator.GenerateNoiseChunk(ref buffer, scale, offset, octaves,lacunarity, persistence);
 
-        bool tallChunk = Random.Range(0, 6) == 0;
+        bool bump = Random.Range(0, 6) == 0;
 
         // process noise in buffer
         for (int i = 0; i < buffer.Length; i++)
-        {
-            float interpolator = (float)i / (float)buffer.Length;
+        { 
 
-            buffer[i] *= 0.5f + 1.0f * buildHeight / 300;
+            float heightNormalized = Mathf.Clamp01(Mathf.InverseLerp(0, 300, buildHeight));
 
-            if (tallChunk)
+            float cosWeight = Mathf.Lerp(maxBumpHeight, startBumpHeight, 1-heightNormalized);
+            float chunkHeight = Mathf.Lerp(startChunkHeight, maxChunkHeight, heightNormalized);
+            
+            // chunk height
+            buffer[i] *= 0.5f + chunkHeight;
+            
+            // generate bump
+            if (bump)
             {
-                buffer[i] += (-Mathf.Cos(interpolator * Mathf.PI * 2) / 2 + 0.5f);
+                buffer[i] += Cos01((float)i / (float)buffer.Length) * cosWeight;
             }
             
         }
+    }
+
+
+
+    /// <summary>
+    /// Cosine function that oscillates between 0 and 1 over a period of 1.
+    /// </summary>
+    float Cos01(float x)
+    {
+        return (-Mathf.Cos(x * Mathf.PI * 2.0f) + 1.0f) / 2.0f;
     }
 
 
