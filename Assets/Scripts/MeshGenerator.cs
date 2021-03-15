@@ -166,7 +166,7 @@ public class MeshGenerator : MonoBehaviour
 
 
     
-    public Vector2 GetPointBetweenObstacles(float height, float lerp = 0.5f)
+    public Vector2 GetPointBetweenObstacles(float height, float interpolator = 0.5f)
     {
         Vector2 pos;
 
@@ -189,7 +189,7 @@ public class MeshGenerator : MonoBehaviour
         Vector2 rightPos = right.colliderPoints[index];
 
 
-        pos = Vector2.Lerp(leftPos, rightPos, lerp);
+        pos = Vector2.Lerp(leftPos, rightPos, interpolator);
 
         return pos;
     }
@@ -200,13 +200,23 @@ public class MeshGenerator : MonoBehaviour
     {
         noiseGenerator.GenerateNoiseChunk(ref buffer, scale, offset, octaves,lacunarity, persistence);
 
+        bool tallChunk = Random.Range(0, 6) == 0;
+
         // process noise in buffer
         for (int i = 0; i < buffer.Length; i++)
         {
-            // TEMPORARY
-            buffer[i] *= 0.5f + 1.0f * buildHeight / 100;
+            float interpolator = (float)i / (float)buffer.Length;
+
+            buffer[i] *= 0.5f + 1.0f * buildHeight / 300;
+
+            if (tallChunk)
+            {
+                buffer[i] += (-Mathf.Cos(interpolator * Mathf.PI * 2) / 2 + 0.5f);
+            }
+            
         }
     }
+
 
     void AddVertices(ref Obstacle obs, Vector3 offset, bool faceLeft = false)
     {
