@@ -1904,10 +1904,10 @@ MonoBehaviour:
   cameraSize: {x: 0, y: 0}
   leftObstacleHolder: {fileID: 1572406681}
   rightObstacleHolder: {fileID: 2074281794}
-  scale: 2
-  octaves: 1
-  lacunarity: 2
-  persistence: 0.5
+  startChunkHeight: 0.3
+  startBumpHeight: 1
+  maxChunkHeight: 1.6
+  maxBumpHeight: 0.4
 --- !u!1 &1404080528
 GameObject:
   m_ObjectHideFlags: 0
