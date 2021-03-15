@@ -198,7 +198,7 @@ public class GameManager : MonoBehaviour
                     maxBallHeight = ball.transform.position.y;
                     uiManager.DisplayScore((int)maxBallHeight);
                 }
-                mainCamera.SetTargetPosition(Vector2.up * maxBallHeight);
+                mainCamera.SetTargetPosition(Vector2.up * maxBallHeight + Vector2.up);
 
 
                 if (maxBallHeight + ropePickupSpawnHeightAboveBall > lastRopePickupHeight + distanceBetweenRopePickups)

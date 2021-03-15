@@ -27,7 +27,7 @@ public class RopePickup : MonoBehaviour
 
     void GetConsumed()
     {
-        Debug.Log("Pickup consumed");
+
         consumed = true;
 
         // disappear
