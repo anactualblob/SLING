@@ -257,12 +257,10 @@ public class MeshGenerator : MonoBehaviour
                 obs.colliderPoints.Add(offset + new Vector3(-obs.noiseChunk[i], i / (float)verticesPerUnit));
 
                 obs.vertices.Add(offset + new Vector3(0, i / (float)verticesPerUnit));
-                //obs.colliderPoints.Add(offset + new Vector3(0, i / (float)verticesPerUnit));
             }
             else
             {
                 obs.vertices.Add(offset + new Vector3(0, i / (float)verticesPerUnit));
-                //obs.colliderPoints.Add(offset + new Vector3(0, i / (float)verticesPerUnit));
 
                 obs.vertices.Add(offset + new Vector3(obs.noiseChunk[i], i / (float)verticesPerUnit));
                 obs.colliderPoints.Add(offset + new Vector3(obs.noiseChunk[i], i / (float)verticesPerUnit));

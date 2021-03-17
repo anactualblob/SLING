@@ -196,7 +196,7 @@ public class GameManager : MonoBehaviour
                 if (ball.transform.position.y > maxBallHeight)
                 {
                     maxBallHeight = ball.transform.position.y;
-                    uiManager.DisplayScore((int)maxBallHeight);
+                    uiManager.DisplayScore((int)(maxBallHeight*10));
                 }
                 mainCamera.SetTargetPosition(Vector2.up * maxBallHeight + Vector2.up);
 
