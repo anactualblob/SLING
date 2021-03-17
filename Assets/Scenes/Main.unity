@@ -2298,10 +2298,10 @@ MonoBehaviour:
   cameraSize: {x: 0, y: 0}
   leftObstacleHolder: {fileID: 1572406681}
   rightObstacleHolder: {fileID: 2074281794}
-  startChunkHeight: 0.3
-  startBumpHeight: 1
-  maxChunkHeight: 1.6
-  maxBumpHeight: 0.4
+  startChunkHeight: 0.08
+  startBumpHeight: 0.4
+  maxChunkHeight: 0.65
+  maxBumpHeight: 0.15
 --- !u!1 &1404080528
 GameObject:
   m_ObjectHideFlags: 0

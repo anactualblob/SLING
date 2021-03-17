@@ -88,22 +88,23 @@ public class MeshGenerator : MonoBehaviour
     GameObject rightObstacleHolder = null;
 
     [Header("Height Values")]
-    [SerializeField] float startChunkHeight = 0.5f;
-    [SerializeField] float startBumpHeight = 1.0f;
+
+    [SerializeField, Range(0, 1)] float startChunkHeight = 0.1f;
+    [SerializeField, Range(0, 1)] float startBumpHeight = 0.5f;
     [Space]
-    [SerializeField] float maxChunkHeight = 1.5f;
-    [SerializeField] float maxBumpHeight = 0.5f;
+    [SerializeField, Range(0, 1)] float maxChunkHeight = 0.6f;
+    [SerializeField, Range(0, 1)] float maxBumpHeight = 0.15f;
+    
 
 
     
+
+
     float scale = 2.0f;
     
     int octaves = 1;
     float lacunarity = 2.0f;
     float persistence = 0.5f;
-
-
-
 
 
 
@@ -221,8 +222,10 @@ public class MeshGenerator : MonoBehaviour
 
             float heightNormalized = Mathf.Clamp01(Mathf.InverseLerp(0, 300, buildHeight));
 
-            float cosWeight = Mathf.Lerp(maxBumpHeight, startBumpHeight, 1-heightNormalized);
-            float chunkHeight = Mathf.Lerp(startChunkHeight, maxChunkHeight, heightNormalized);
+            
+            float cosWeight = Mathf.Lerp(maxBumpHeight * cameraSize.x, startBumpHeight * cameraSize.x, 1 - heightNormalized);
+            float chunkHeight = Mathf.Lerp(startChunkHeight * cameraSize.x, maxChunkHeight * cameraSize.x, heightNormalized);
+            
             
             // chunk height
             buffer[i] *= 0.5f + chunkHeight;
