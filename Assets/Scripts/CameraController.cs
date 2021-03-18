@@ -69,4 +69,10 @@ public class CameraController : MonoBehaviour
     {
         targetPos = pos;
     }
+
+    public void SetPosition(Vector2 pos)
+    {
+        transform.position = pos;
+        targetPos = transform.position;
+    }
 }

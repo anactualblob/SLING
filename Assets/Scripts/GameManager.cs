@@ -37,7 +37,7 @@ public class GameManager : MonoBehaviour
 
     [Header("Scene Objects")]
     [SerializeField] CameraController mainCamera = null;
-    [SerializeField] BackgroundManager bgManager = null;
+    //[SerializeField] BackgroundManager bgManager = null;
     [SerializeField] MeshGenerator meshGen = null;
     [SerializeField] GameObjectPool ropePickupPool = null;
     [Space]
@@ -156,10 +156,10 @@ public class GameManager : MonoBehaviour
         maxBallHeight = 0;
 
         // Camera reset
-        mainCamera.SetTargetPosition(Vector2.zero);
+        mainCamera.SetPosition(Vector2.zero);
 
         // Reset backgrounds
-        bgManager.InitBackgrounds();
+        //bgManager.InitBackgrounds();
 
         // Reset the rope pickup pool and height
         ropePickupPool.ReturnAllToPool();
