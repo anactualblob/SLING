@@ -23,8 +23,10 @@ public class UIManager : MonoBehaviour
 
     public bool _coroutineActive = false;
 
+    AnimationTracker tracker;
 
-    public void Awake()
+
+    private void Awake()
     {
         _startAnimator = startCanvas.GetComponent<IAnimatedCanvas>();
         if (_startAnimator != null) dict.Add(startCanvas, _startAnimator);
@@ -34,6 +36,13 @@ public class UIManager : MonoBehaviour
 
         _gameOverAnimator = gameOverCanvas.GetComponent<IAnimatedCanvas>();
         if (_gameOverAnimator != null) dict.Add(gameOverCanvas, _gameOverAnimator);
+
+        tracker = new AnimationTracker();
+
+        foreach(IAnimatedCanvas c in dict.Values)
+        {
+            c.Init();
+        }
     }
 
 
@@ -57,7 +66,7 @@ public class UIManager : MonoBehaviour
 
     private void EnsureAllCoroutinesAreFinished()
     {
-        if (_coroutineActive)
+        if (tracker.animating)
         {
             StopAllCoroutines();
             _startAnimator?.ResetState();
@@ -73,13 +82,20 @@ public class UIManager : MonoBehaviour
         if (startCanvas.activeInHierarchy)
             return;
 
-
+        // select a canvas to hide according to which is active in the hierarchy
         if (gameCanvas.activeInHierarchy)
+        {
             StartCoroutine(CoroutineSwitchCanvas(startCanvas, gameCanvas));
+        }
         else if (gameOverCanvas.activeInHierarchy)
+        {
             StartCoroutine(CoroutineSwitchCanvas(startCanvas, gameOverCanvas));
+        }
         else
+        {
             StartCoroutine(CoroutineSwitchCanvas(startCanvas, null));
+        }
+            
     }
 
     public void ShowGameOverCanvas()
@@ -89,6 +105,7 @@ public class UIManager : MonoBehaviour
         if (gameOverCanvas.activeInHierarchy)
             return;
 
+        // select a canvas to hide according to which is active in the hierarchy
         if (gameCanvas.activeInHierarchy)
             StartCoroutine(CoroutineSwitchCanvas(gameOverCanvas, gameCanvas));
         else if (startCanvas.activeInHierarchy)
@@ -104,6 +121,7 @@ public class UIManager : MonoBehaviour
         if (gameCanvas.activeInHierarchy)
             return;
 
+        // select a canvas to hide according to which is active in the hierarchy
         if (gameOverCanvas.activeInHierarchy)
             StartCoroutine(CoroutineSwitchCanvas(gameCanvas, gameOverCanvas));
         else if (startCanvas.activeInHierarchy)
@@ -114,23 +132,56 @@ public class UIManager : MonoBehaviour
 
     IEnumerator CoroutineSwitchCanvas(GameObject canvasToShow, GameObject canvasToHide)
     {
-        _coroutineActive = true;
 
         if (canvasToHide != null)
         {
             if (dict.TryGetValue(canvasToHide, out IAnimatedCanvas hide))
+            {
+                tracker.RegisterAnimating(hide);
                 yield return StartCoroutine(hide.AnimateHide());
+                tracker.DeregisterAnimating(hide);
+            }
             else
+            {
                 canvasToHide.SetActive(false);
+            }
         }
 
     
         if (dict.TryGetValue(canvasToShow, out IAnimatedCanvas show))
+        {
+            tracker.RegisterAnimating(show);
             yield return StartCoroutine(show.AnimateShow());
+            tracker.DeregisterAnimating(show);
+        }
         else
+        {
             canvasToShow.SetActive(true);
+        }
 
-        _coroutineActive = false;
     }
+
+
+    class AnimationTracker
+    {
+        public bool animating
+        {
+            get => _currentAnimations.Count != 0;
+        }
+
+        List<IAnimatedCanvas> _currentAnimations = new List<IAnimatedCanvas>();
+
+        public void RegisterAnimating(IAnimatedCanvas canvas)
+        {
+            _currentAnimations.Add(canvas);
+        }
+
+        public void DeregisterAnimating(IAnimatedCanvas canvas)
+        {
+            _currentAnimations.Remove(canvas);
+        }
+    }
+
+
 
 }

@@ -6,4 +6,6 @@ public interface IAnimatedCanvas
     IEnumerator AnimateHide();
 
     void ResetState();
+
+    void Init();
 }

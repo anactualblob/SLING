@@ -16,6 +16,8 @@ public class CameraController : MonoBehaviour
 
     Vector2 targetPos;
 
+    [SerializeField] private float maxDistancePerFrame;
+
 
     void Start()
     {
@@ -31,10 +33,26 @@ public class CameraController : MonoBehaviour
     }
 
     
-    void LateUpdate()
+    void FixedUpdate()
     {
         // update position according to targetPos  
-        transform.position = (Vector3)targetPos - Vector3.forward * 10;
+        //transform.position = (Vector3)targetPos - Vector3.forward * 10;
+
+        Vector2 posToTarget = targetPos - (Vector2)transform.position;
+
+        if (posToTarget.magnitude < maxDistancePerFrame)
+        {
+            transform.position = targetPos;
+        }
+        else
+        {
+            transform.position += Vector3.up * maxDistancePerFrame;
+        }
+        //transform.position = Vector3.MoveTowards(transform.position, (Vector3)targetPos, 0.1f);
+
+
+        // ensure we're moved back 10 units
+        transform.position = new Vector3(transform.position.x, transform.position.y, -10);
     }
 
 

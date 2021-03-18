@@ -19,9 +19,9 @@ public class StartCanvasAnimator : MonoBehaviour, IAnimatedCanvas
     private float _animationTime = 0.2f;
     private float _height = 1000.0f;
 
-    private void Awake()
+    public void Init()
     {
-        gameObject.SetActive(true);
+        //gameObject.SetActive(true);
         _titleStartPos = title.anchoredPosition;
         _touchTextStartPos = touchToStart.anchoredPosition;
     }
@@ -90,6 +90,5 @@ public class StartCanvasAnimator : MonoBehaviour, IAnimatedCanvas
 
         gameObject.SetActive(false);
     }
-
 
 }

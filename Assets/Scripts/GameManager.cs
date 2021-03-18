@@ -66,23 +66,25 @@ public class GameManager : MonoBehaviour
         get { return S._state; }
         private set
         {
-            S._state = value;
-
             switch (value)
             {
                 case GameState.waitingToStart:
                     S.uiManager.ShowStartCanvas();
                     break;
                 case GameState.touching:
-                    S.uiManager.ShowGameCanvas();
+                    if (S._state != GameState.touching && S._state != GameState.notTouching)
+                        S.uiManager.ShowGameCanvas();
                     break;
                 case GameState.notTouching:
-                    S.uiManager.ShowGameCanvas();
+                    if (S._state != GameState.touching && S._state != GameState.notTouching)
+                        S.uiManager.ShowGameCanvas();
                     break;
                 case GameState.gameOver:
                     S.uiManager.ShowGameOverCanvas();
                     break;
             }
+
+            S._state = value;
         }
 
     }

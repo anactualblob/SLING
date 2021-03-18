@@ -89,11 +89,11 @@ public class MeshGenerator : MonoBehaviour
 
     [Header("Height Values")]
 
-    [SerializeField, Range(0, 1)] float startChunkHeight = 0.1f;
-    [SerializeField, Range(0, 1)] float startBumpHeight = 0.5f;
+    [SerializeField, Range(0, 0.9f)] float startChunkHeight = 0.1f;
+    [SerializeField, Range(0, 0.9f)] float startBumpHeight = 0.5f;
     [Space]
-    [SerializeField, Range(0, 1)] float maxChunkHeight = 0.6f;
-    [SerializeField, Range(0, 1)] float maxBumpHeight = 0.15f;
+    [SerializeField, Range(0, 0.9f)] float maxChunkHeight = 0.6f;
+    [SerializeField, Range(0, 0.9f)] float maxBumpHeight = 0.15f;
     
 
 
@@ -224,11 +224,13 @@ public class MeshGenerator : MonoBehaviour
 
             
             float cosWeight = Mathf.Lerp(maxBumpHeight * cameraSize.x, startBumpHeight * cameraSize.x, 1 - heightNormalized);
-            float chunkHeight = Mathf.Lerp(startChunkHeight * cameraSize.x, maxChunkHeight * cameraSize.x, heightNormalized);
-            
+            float height = Mathf.Lerp(startChunkHeight * cameraSize.x, maxChunkHeight * cameraSize.x, heightNormalized);
+
+            float pad = 0.1f * cameraSize.x;
             
             // chunk height
-            buffer[i] *= 0.5f + chunkHeight;
+            buffer[i] *= height;
+            buffer[i] += pad;
             
             // generate bump
             if (bump)

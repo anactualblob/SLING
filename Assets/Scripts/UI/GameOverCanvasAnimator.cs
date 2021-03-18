@@ -16,7 +16,7 @@ public class GameOverCanvasAnimator : MonoBehaviour, IAnimatedCanvas
     private float _animDuration = 0.2f;
     private float _baseAlpha = 0.8f;
 
-    private void Awake()
+    public void Init()
     {
         _buttonPos = button.anchoredPosition;
         _textContainerPos = textContainer.anchoredPosition;
@@ -62,6 +62,5 @@ public class GameOverCanvasAnimator : MonoBehaviour, IAnimatedCanvas
 
         gameObject.SetActive(false);
     }
-
 
 }

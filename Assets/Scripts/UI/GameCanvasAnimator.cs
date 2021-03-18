@@ -13,8 +13,9 @@ public class GameCanvasAnimator : MonoBehaviour, IAnimatedCanvas
 
     private float _height = 1000;
 
-    private void Awake()
+    public void Init()
     {
+        //gameObject.SetActive(true);
         _ropesPos = ropes.anchoredPosition;
         _scorePos = score.anchoredPosition;
     }
