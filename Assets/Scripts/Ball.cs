@@ -46,12 +46,29 @@ public class Ball : MonoBehaviour
     }
 
 
-    void Update()
-    {
+    //void Update()
+    //{
+    //
+    //    if (attached)
+    //    {
+    //        rb.MovePosition(rope.attachPoint);
+    //        trail.enabled = false;
+    //    }
+    //    else
+    //    {
+    //        trail.enabled = true;
+    //    }
+    //
+    //    
+    //}
 
+
+    private void LateUpdate()
+    {
         if (attached)
         {
             rb.MovePosition(rope.attachPoint);
+            transform.position = rope.attachPoint;
             trail.enabled = false;
         }
         else
@@ -59,12 +76,9 @@ public class Ball : MonoBehaviour
             trail.enabled = true;
         }
 
-        
-    }
+        Physics2D.SyncTransforms();
 
 
-    private void LateUpdate()
-    {
         // keep a history of positions from previous frames
         positionHistory.Enqueue(transform.position);
         while (positionHistory.Count > positionHistoryLimit)

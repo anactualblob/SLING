@@ -64,6 +64,8 @@ public class Rope : MonoBehaviour
         SimulateRope();
         ConstrainSegments(false);
         DrawRope();
+
+        Physics2D.SyncTransforms();
     }
 
 
